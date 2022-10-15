@@ -1,16 +1,14 @@
 // dependencies
-let results = require('./dummyData')
-let dummyPhotoUrl = "https://lh3.googleusercontent.com/places/AM5lPC-_-iZC51imMYwMKbZxClNluv7ogHlo3-bobPkaPaTbpcyJIjX-CyTagttVeBXIp2B96IzeXYf2YhhWt5Mp9XoqASbMQqFi_FQ=s1600-w1200"
-let dummyPhotoArr = require("./dummyPhotos")
-
 require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 var axios = require('axios')
 const { XMLParser }  = require('fast-xml-parser')
+const mongoose = require('mongoose')
 
 const app = express()
+const dbo = require('./db/conn')
 const parser = new XMLParser();
 
 // middleware
@@ -18,6 +16,12 @@ app.use(cors())
 app.use(express.static('public'))
 app.use(express.urlencoded( { extended: true }))
 app.use(bodyParser.json())
+
+// Database
+mongoose.connect(process.env.ATLAS_URI, {useNewUrlParser: true, useUnifiedTopology: true},
+    // run a function when you connect - type to console
+    () => {console.log("connected to mongo: ", process.env.ATLAS_URI)}
+)
 
 // Controller for the API
 app.use('/api', require("./controllers/api"))

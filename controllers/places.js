@@ -1,14 +1,21 @@
+// Dummy Data
 let results = require('../dummyData')
 let dummyPhotoUrl = "https://lh3.googleusercontent.com/places/AM5lPC-_-iZC51imMYwMKbZxClNluv7ogHlo3-bobPkaPaTbpcyJIjX-CyTagttVeBXIp2B96IzeXYf2YhhWt5Mp9XoqASbMQqFi_FQ=s1600-w1200"
 let dummyPhotoArr = require("../dummyPhotos")
 let dummyPhotoUrls = require('../dummyPhotoURLs')
-const router = require ('express').Router()
 
+const places = require ('express').Router()
+
+// middleware
 var axios = require('axios')
 const { XMLParser }  = require('fast-xml-parser')
 const parser = new XMLParser();
 
-router.get('/', async (req, res) => {
+// Database
+const Place = require('../models/place')
+
+
+places.get('/', async (req, res) => {
     // function that returns a random latitude and longitude
     function getRandomCoords(){
         let latRange = [25, 49] // Positve for US
@@ -55,20 +62,18 @@ router.get('/', async (req, res) => {
         return {
             locationLat: results.results[0].geometry.location.lat,
             locationLong: results.results[0].geometry.location.lng,
-            placeID: results.results[0].place_id
+            placeID: results.results[0].place_id,
+            name: results.results[0].name
         }
     }
 
-    // pull location data from the google result
-    let location = results.results[0].geometry.location
-    let locationLat = location.lat
-    let locationLong = location.lng
+    let placeInfo = {
+        locationLat: results.results[0].geometry.location.lat,
+        locationLong: results.results[0].geometry.location.lng,
+        placeID: results.results[0].place_id,
+        name: results.results[0].name
+    }
 
-    // pull placeId from google result
-    let placeID = results.results[0].place_id
-    
-    // pull photo reference from google result
-    let photoId = results.results[0].photos[0].photo_reference
 
     // function for getting additional place photos
     async function getPhotoArr(urlPlaceID) {
@@ -108,8 +113,40 @@ router.get('/', async (req, res) => {
 
     //let returnedURLs = await getPhotoURLArr(dummyPhotoArr)
     let returnedURLs = dummyPhotoUrls
-    res.send(returnedURLs)
+
+    let placeObj = {
+        placeId: placeInfo.placeID,
+        name:placeInfo.name,
+        lat: placeInfo.locationLat,
+        long: placeInfo.locationLong,
+        photos: returnedURLs
+    }
+
+    // function to post place information to place Database
+    async function postPlace(placeObj){
+        // check to see if record exists in database
+        let doesExist = await Place.exists({placeId: placeObj.placeId})
+
+        // if the record does not exist, create a new one
+        if (!doesExist) {
+            Place.create({
+                placeId: placeObj.placeId,
+                name: placeObj.name,
+                lat: placeObj.lat,
+                long: placeObj.long,
+                photos: placeObj.photos
+            }).catch(err => console.log(err))
+        }
+
+    }
+
+    // add place to database
+    postPlace(placeObj)
+
+    // return the placeObject to client
+    res.send(placeObj)
 
 })
 
-module.exports = router
+
+module.exports = places
