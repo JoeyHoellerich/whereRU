@@ -24,7 +24,6 @@ places.get('/', async (req, res) => {
         let latGuess = (Math.random() * (latRange[1] - latRange[0]) + latRange[0]).toFixed(4)
         let longGuess = -1 * (Math.random() * (longRange[1] - longRange[0]) + longRange[0]).toFixed(4)
     
-        console.log(latGuess, longGuess)
     
         // Get random lat/long coordinates to look for
         let randomCoords = {
@@ -37,7 +36,6 @@ places.get('/', async (req, res) => {
             let results = parser.parse(res.data)
             latGuess = results['geodata']['nearest'].latt
             longGuess = results['geodata']['nearest'].longt
-            console.log(latGuess, longGuess)
         }).catch(() => {
             console.log("server overload")
         }) 

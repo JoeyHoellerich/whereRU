@@ -5,15 +5,14 @@ const bcrypt = require('bcrypt')
 users.get('/:username', async (req, res) => {
     let username = req.params.username
 
-    const user = await User.findOne({
-        where: {username: username}
-    })
+    const user = await User.findOne()
 
     if (!user) {
         res.send(false)
     } else {
-        res.json(user)
+        res.send(user)
     }
+    //res.send("hello")
 })
 
 users.post('/', async (req, res) => {
