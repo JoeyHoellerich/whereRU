@@ -74,6 +74,10 @@ button:hover {
   color: #89A1EF;
 }
 
+.btnNavContainer button:hover {
+  color: white;
+}
+
 .loginContainer {
   background-color: black;
   color: white;
@@ -86,7 +90,7 @@ button:hover {
 }
 
 .loginContainer label {
-  font-size: 1.5em;
+  font-size: 1.2em;
   color:white;
   margin: 10px 0;
 }
@@ -100,6 +104,8 @@ input {
   width: 70%;
   height: 2em;
   border-radius: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 
