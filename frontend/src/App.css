@@ -5,6 +5,8 @@
 
 h2 {
   color: #89A1EF;
+  font-style: italic;
+  text-decoration: underline;
 }
 
 .homeContainer {
@@ -24,16 +26,17 @@ h2 {
   margin-right: 2%;
 }
 
-.homeContainer button {
+button {
   background-color: #89A1EF;
   border: 2px solid black;
   border-radius: 10px;
   font-size: 1.25em;
   height: 2em;
   font-weight: 600;
+  margin-top: 20px;
 }
 
-.homeContainer button:hover {
+button:hover {
   color: white;
   background-color: #5f70a8;
 }
@@ -69,6 +72,34 @@ h2 {
   background: none;
   border: none;
   color: #89A1EF;
+}
+
+.loginContainer {
+  background-color: black;
+  color: white;
+  display: flex;
+  padding: 5px 15px;
+}
+
+.loginContainer div {
+  flex-grow: 2;
+}
+
+.loginContainer label {
+  font-size: 1.5em;
+  color:white;
+  margin: 10px 0;
+}
+
+.loginContainer input {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+input {
+  width: 70%;
+  height: 2em;
+  border-radius: 10px;
 }
 
 
