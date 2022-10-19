@@ -14,7 +14,7 @@ h2 {
   justify-content: space-between;
   color: white;
   background-color: black;
-  height: 60vh;
+  height: 80vh;
 }
 
 .homeContainer div {
@@ -83,6 +83,7 @@ button:hover {
   color: white;
   display: flex;
   padding: 5px 15px;
+  height: 80vh;
 }
 
 .loginContainer div {

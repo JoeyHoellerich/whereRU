@@ -1,16 +1,25 @@
 import React from "react";
 import logoTitle from "../imgs/whereRU_title.svg"
+import { Link } from "react-router-dom"
 
 function Nav(){
     return (
         <div className="navContainer">
             <div>
-                <img src={logoTitle} alt = "where r u"/>
+                <Link to="/">
+                    <img src={logoTitle} alt = "where r u"/>
+                </Link>
             </div>
             <div className="btnNavContainer">
-                <button>Play</button>
-                <button>Login</button>
-                <button>Sign Up</button>
+                <Link to="/play">
+                    <button>Play</button>
+                </Link>
+                <Link to="/login">
+                    <button>Login</button>
+                </Link>
+                <Link to="/signup">
+                    <button>Sign Up</button>
+                </Link>
             </div>
 
         </div>
