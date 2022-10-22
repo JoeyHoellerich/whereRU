@@ -29,9 +29,12 @@ users.post('/', async (req, res) => {
 // verfies a user when they log in (login form)
 users.post('/authentication', async (req, res) => {
     // finds user with specified username
-    let user = await User.findOne({
-        where: {username: req.body.username}
-    })
+    let user = await User.findOne({username: req.body.username})
+
+    console.log(user.passwordDigest)
+    console.log(req.body.password)
+    let test = await bcrypt.compare(req.body.password, user.passwordDigest)
+    console.log(test)
 
     // if the user does not exist of the password is incorrect, send error
     if (!user.passwordDigest || !await bcrypt.compare(req.body.password, user.passwordDigest)) {
@@ -58,11 +61,7 @@ users.get("/authentication/profile", async (req, res) => {
 
             const { username } = result
             
-            let user = await User.findOne({
-                where: {
-                    username: username
-                }
-            })
+            let user = await User.findOne({ username: username })
             res.json(user)
         }
     } catch {
@@ -74,9 +73,7 @@ users.get("/authentication/profile", async (req, res) => {
 users.get('/:username', async (req, res) => {
     let username = req.params.username
 
-    const user = await User.findOne({
-        where: {username: username}
-    })
+    const user = await User.findOne({username: username})
 
     if (!user) {
         res.json(null)
