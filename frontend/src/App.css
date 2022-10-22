@@ -125,5 +125,14 @@ input {
   padding-right: 10px;
 }
 
+.playContainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.playContainer div {
+  width: 50%;
+}
 
 

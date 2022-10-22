@@ -4,6 +4,7 @@ import { useMapEvents } from 'react-leaflet/hooks'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import icon from "../../imgs/marker-icon.png"
+import trueIcon from "../../imgs/green-marker-icon.png"
 
 
 function MapControl(props) {
@@ -11,21 +12,32 @@ function MapControl(props) {
         click: (e) => {
             let latlng = e.latlng
             let result = [latlng.lat, latlng.lng]
-            console.log(result)
             props.setMarkers([result])
-            console.log(props.markers)
+            props.setGuess(result)
         }
     })
     return null
 }
 
-function MapComponent(){
+function MapComponent(props){
 
     let [markers, setMarkers] = useState([])
 
-        const newIcon = new L.icon({
+    let truePosition = [31, -9]
+
+    const newIcon = new L.icon({
         iconUrl: icon,
         iconRetinaUrl: icon,
+        iconSize: [25,41],
+        shadowSize: [50, 64],
+        iconAnchor: [12, 41],
+        shadowAnchor: [4, 62],
+        popupAnchor: [0,-45]
+    })
+
+    const greenIcon = new L.icon({
+        iconUrl: trueIcon,
+        iconRetinaUrl: trueIcon,
         iconSize: [25,41],
         shadowSize: [50, 64],
         iconAnchor: [12, 41],
@@ -39,13 +51,20 @@ function MapComponent(){
             center = {[0, 0]}
             event
             zoom={3}
-            style={{width: '100%', height:'85vh', border: '3px solid black'}}
+            style={{width: '98%', height:'85vh', border: '3px solid black'}}
         >
-            <MapControl setMarkers = {setMarkers} markers = {markers}/>
+            <MapControl setMarkers = {setMarkers} markers = {markers} setGuess = {props.setGuess}/>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+                {props.isSubmit ?
+                    <Marker key={`marker-true`} position={truePosition} icon={greenIcon}>
+                    <Popup>
+                        {props.isSubmit.toString()}
+                    </Popup>
+                    </Marker>
+                : <></>}
                 {markers.length > 0 ? markers.map((position, index) => {
                     return (
                         <Marker key={`marker-${index}`} position={position} icon={newIcon}>
@@ -54,7 +73,7 @@ function MapComponent(){
                         </Popup>
                         </Marker>
                     )
-                }): <></>}
+                }): <></>}          
         </MapContainer>
     )
 }
