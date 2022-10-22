@@ -26,9 +26,6 @@ function SignUp(){
             },
             body: JSON.stringify(currentUser)
         })
-
-        const data = await response.json()
-
         if (response.status === 201 && currentUser.username.length > 0 && currentUser.password.length > 0){
             console.log(currentUser)
         } else {
