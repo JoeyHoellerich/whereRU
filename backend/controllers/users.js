@@ -31,11 +31,6 @@ users.post('/authentication', async (req, res) => {
     // finds user with specified username
     let user = await User.findOne({username: req.body.username})
 
-    console.log(user.passwordDigest)
-    console.log(req.body.password)
-    let test = await bcrypt.compare(req.body.password, user.passwordDigest)
-    console.log(test)
-
     // if the user does not exist of the password is incorrect, send error
     if (!user.passwordDigest || !await bcrypt.compare(req.body.password, user.passwordDigest)) {
         res.status(404).json({

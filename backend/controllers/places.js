@@ -48,7 +48,6 @@ places.get('/', async (req, res) => {
 
     // function for getting information from google map data (input latLong)
     async function getPlace(urlLatLong){
-        console.log(urlLatLong)
         var config = {
                 method: 'get',
                 url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${urlLatLong}&radius=50000&key=${process.env.PLACES_API}`,

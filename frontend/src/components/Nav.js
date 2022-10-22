@@ -55,9 +55,16 @@ function Nav(){
                 {welcomeMessage}
             </div>
             <div className="btnNavContainer">
-                <Link to="/play">
-                    <button>Play</button>
-                </Link>
+                {currentUser 
+                    ? 
+                    <Link to="/play">
+                        <button>Play</button>
+                    </Link>
+                    :
+                    <Link to="/login">
+                        <button>Play</button>
+                    </Link>
+                }
                 {loginActions}
             </div>
 
