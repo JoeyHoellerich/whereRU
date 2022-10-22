@@ -18,10 +18,23 @@ function SignUp(){
 
     let handleSubmit = async (e) => {
         e.preventDefault()
-        if (currentUser.username === "" || currentUser.password === ""){
+
+        let response = await fetch('http://localhost:5000/api/users/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(currentUser)
+        })
+
+        const data = await response.json()
+
+        if (response.status === 201 && currentUser.username.length > 0 && currentUser.password.length > 0){
+            console.log(currentUser)
+        } else {
             setInvalidName(true)
         }
-        console.log(currentUser)
+
     }
 
     return(

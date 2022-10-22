@@ -1,9 +1,12 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import logo from "../imgs/whereRU_logo.svg"
+import { CurrentUser } from "../context/CurrentUser"
 
 function Login(){
 
-    let [currentUser, setCurrentUser] = useState({
+    const { setCurrentUser } = useContext(CurrentUser)
+
+    let [credentials, setCredentials] = useState({
         username: "",
         password: ""
     })
@@ -14,15 +17,31 @@ function Login(){
         if (invalidCombo && value === {password: ""}){
             setInvalidCombo(false)
         }
-        return setCurrentUser((prev) => {
+        return setCredentials((prev) => {
             return {...prev, ...value}
         })
     }
 
     let handleSubmit = async (e) => {
         e.preventDefault()
-        setInvalidCombo(true)
-        console.log(currentUser)
+        console.log(JSON.stringify(credentials))
+        const response = await fetch(`http://localhost:5000/api/users/authentication`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(credentials)
+        })
+
+        const data = await response.json()
+
+        if (response.status === 200){
+            setCurrentUser(data.username)
+            localStorage.setItem('token', data.token)
+        } else {
+            setInvalidCombo(true)
+        }
     }
 
     return(
@@ -35,7 +54,7 @@ function Login(){
                     <input 
                         type="text" 
                         name="username"
-                        value = {currentUser.username}
+                        value = {credentials.username}
                         onChange = {(e) => updateForm({username: e.target.value})}
                         >
                     </input> 
@@ -45,7 +64,7 @@ function Login(){
                     <input 
                         type="password" 
                         name="password"
-                        value = {currentUser.password}
+                        value = {credentials.password}
                         onChange = {e => updateForm({password: e.target.value})}
                         >
                     </input> 

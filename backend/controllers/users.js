@@ -3,51 +3,51 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-users.get('/:username', async (req, res) => {
-    let username = req.params.username
 
-    const user = await User.findOne()
-
-    if (!user) {
-        res.send(false)
-    } else {
-        res.send(user)
-    }
-    //res.send("hello")
-})
-
+// route to add a new user to database (sign up form)
 users.post('/', async (req, res) => {
+    // check to see if username already exists in the database
     let doesExist = await User.exists({username: req.body.username})
 
+    // if the username is valid, add the user
     if (!doesExist){
         let password = req.body.password
         let user = await User.create({
             username: req.body.username,
             passwordDigest: await bcrypt.hash(password, 10)
         })
-        res.json(user)
+        res.status(201).json(user)
+        // if the username already exists send an error
     } else {
-        res.send(false)
+        res.status(404).json({
+            message: "user already exists"
+        })
     }
 })
 
+
+// verfies a user when they log in (login form)
 users.post('/authentication', async (req, res) => {
-    let user = User.findOne({
+    // finds user with specified username
+    let user = await User.findOne({
         where: {username: req.body.username}
     })
 
-    if (!user || !await bcrypt.compare(req.body.password, user.passwordDigest)) {
+    // if the user does not exist of the password is incorrect, send error
+    if (!user.passwordDigest || !await bcrypt.compare(req.body.password, user.passwordDigest)) {
         res.status(404).json({
             message: "incorrect username or password"
         })
     }
 
+    // if the username/password is valid, send back signed token
     else {
         const token = jwt.sign({username: user.username}, process.env.JWT_SECRET)
         res.status(200).json({user: user, token: token})
     }
 })
 
+// used by context to verify if the user is signed in via JWT
 users.get("/authentication/profile", async (req, res) => {
     try {
         //Split authorization header into ["Bearer", "Token"]
@@ -67,6 +67,21 @@ users.get("/authentication/profile", async (req, res) => {
         }
     } catch {
         res.json(null)
+    }
+})
+
+// testing route to get information on a particular user
+users.get('/:username', async (req, res) => {
+    let username = req.params.username
+
+    const user = await User.findOne({
+        where: {username: username}
+    })
+
+    if (!user) {
+        res.json(null)
+    } else {
+        res.json(user)
     }
 })
 

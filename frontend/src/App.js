@@ -4,18 +4,21 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import {Route, Routes, BrowserRouter as Router} from "react-router-dom"
 import './App.css';
+import CurrentUserProvider from './context/CurrentUser';
 
 function App() {
   return (
-    <Router>
-      <Nav />
-      <Routes>
-        <Route  path = "/" element = {<Home />} />
-        <Route path = "/login" element = {<Login />} />
-        <Route path = "/signup" element = {<SignUp />} />
-        <Route path = "/play" element = {<></>} />
-      </Routes>
-    </Router>
+    <CurrentUserProvider>
+      <Router>
+        <Nav />
+        <Routes>
+          <Route path = "/" element = {<Home />} />
+          <Route path = "/login" element = {<Login />} />
+          <Route path = "/signup" element = {<SignUp />} />
+          <Route path = "/play" element = {<></>} />
+        </Routes>
+      </Router>
+    </CurrentUserProvider>
   );
 }
 
