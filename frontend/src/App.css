@@ -78,6 +78,22 @@ button:hover {
   color: white;
 }
 
+.logoContainer {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+h3 {
+  color: white;
+  font-size: 1em;
+  height: 2em;
+  padding: 0 10px;
+  font-weight: 400;
+  font-style: italic;
+  margin: 10px 0 0 0;
+}
+
 .loginContainer {
   background-color: black;
   color: white;

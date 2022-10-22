@@ -1,8 +1,10 @@
 import React, {useContext, useState} from "react";
 import logo from "../imgs/whereRU_logo.svg"
 import { CurrentUser } from "../context/CurrentUser"
+import {useNavigate} from "react-router"
 
 function Login(){
+    const navigate = useNavigate()
 
     const { setCurrentUser } = useContext(CurrentUser)
 
@@ -39,6 +41,8 @@ function Login(){
         if (response.status === 200){
             setCurrentUser(data.username)
             localStorage.setItem('token', data.token)
+            navigate("/")
+            window.location.reload(false)
         } else {
             setInvalidCombo(true)
         }
