@@ -23,7 +23,11 @@ function MapComponent(props){
 
     let [markers, setMarkers] = useState([])
 
-    let truePosition = [31, -9]
+    if (props.placeObj){
+        var truePosition = [props.placeObj.lat, props.placeObj.long]
+    } else {
+        truePosition = [0,0]
+    }
 
     const newIcon = new L.icon({
         iconUrl: icon,
@@ -50,8 +54,8 @@ function MapComponent(props){
         <MapContainer 
             center = {[0, 0]}
             event
-            zoom={3}
-            style={{width: '98%', height:'85vh', border: '3px solid black'}}
+            zoom={1}
+            style={{width: '95%', height:'60vh', border: '3px solid #89A1EF', margin: '5px'}}
         >
             <MapControl setMarkers = {setMarkers} markers = {markers} setGuess = {props.setGuess}/>
             <TileLayer
@@ -61,7 +65,7 @@ function MapComponent(props){
                 {props.isSubmit ?
                     <Marker key={`marker-true`} position={truePosition} icon={greenIcon}>
                     <Popup>
-                        {props.isSubmit.toString()}
+                        {props.placeObj.name}
                     </Popup>
                     </Marker>
                 : <></>}

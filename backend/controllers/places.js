@@ -26,19 +26,19 @@ places.get('/', async (req, res) => {
     
     
         // Get random lat/long coordinates to look for
-        let randomCoords = {
-            method: 'get',
-            url: 'https://api.3geonames.org/?randomland=yes'
-        }
+        // let randomCoords = {
+        //     method: 'get',
+        //     url: 'https://api.3geonames.org/?randomland=yes'
+        // }
     
-        axios(randomCoords)
-        .then((res) => {
-            let results = parser.parse(res.data)
-            latGuess = results['geodata']['nearest'].latt
-            longGuess = results['geodata']['nearest'].longt
-        }).catch(() => {
-            console.log("server overload")
-        }) 
+        // axios(randomCoords)
+        // .then((res) => {
+        //     let results = parser.parse(res.data)
+        //     latGuess = results['geodata']['nearest'].latt
+        //     longGuess = results['geodata']['nearest'].longt
+        // }).catch(() => {
+        //     console.log("server overload")
+        // }) 
 
         return {
             latGuess: latGuess,
@@ -46,32 +46,27 @@ places.get('/', async (req, res) => {
         }
     }
 
-    let {latGuess, longGuess} = getRandomCoords()
-    let latLong = `${latGuess}%2C${longGuess}`
-
     // function for getting information from google map data (input latLong)
     async function getPlace(urlLatLong){
+        console.log(urlLatLong)
         var config = {
                 method: 'get',
-                url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${urlLatLong}&rankby=distance&key=${process.env.PLACES_API}`,
+                url: `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${urlLatLong}&radius=50000&key=${process.env.PLACES_API}`,
             }
-        let results = await axios(config)
+        let data = await axios(config)
+        let results = data.data.results
+
+        if (!results || results?.length == 0){
+            return null            
+        }
         
         return {
-            locationLat: results.results[0].geometry.location.lat,
-            locationLong: results.results[0].geometry.location.lng,
-            placeID: results.results[0].place_id,
-            name: results.results[0].name
+            locationLat: results[0].geometry.location.lat,
+            locationLong: results[0].geometry.location.lng,
+            placeID: results[0].place_id,
+            name: results[0].name
         }
     }
-
-    let placeInfo = {
-        locationLat: results.results[0].geometry.location.lat,
-        locationLong: results.results[0].geometry.location.lng,
-        placeID: results.results[0].place_id,
-        name: results.results[0].name
-    }
-
 
     // function for getting additional place photos
     async function getPhotoArr(urlPlaceID) {
@@ -82,7 +77,11 @@ places.get('/', async (req, res) => {
         
         let detailResults = await axios(getPlace)
         let photoRefArr = detailResults.data.result.photos
-        return photoRefArr
+        if (photoRefArr) {
+            return photoRefArr
+        } else {
+            return null
+        }
     }
     
     // Function for getting one image URL from google
@@ -97,27 +96,18 @@ places.get('/', async (req, res) => {
         return photoURL
     }
 
+
     // Function to get array of photo URLs
     async function getPhotoURLArr(photoArr){
         let returnedURLs = [];
+        let arraylength = photoArr.length
 
-        for (let i = 0; i < photoArr.length; i++){
+        for (let i = 0; i < arraylength; i++){
             let photoURL = await getPhotoURL(photoArr[i].photo_reference)
             returnedURLs.push(photoURL)    
         }
 
         return returnedURLs
-    }
-
-    //let returnedURLs = await getPhotoURLArr(dummyPhotoArr)
-    let returnedURLs = dummyPhotoUrls
-
-    let placeObj = {
-        placeId: placeInfo.placeID,
-        name:placeInfo.name,
-        lat: placeInfo.locationLat,
-        long: placeInfo.locationLong,
-        photos: returnedURLs
     }
 
     // function to post place information to place Database
@@ -135,15 +125,53 @@ places.get('/', async (req, res) => {
                 photos: placeObj.photos
             }).catch(err => console.log(err))
         }
-
     }
 
-    // add place to database
-    postPlace(placeObj)
+    async function getRandomPlace() {
+        let dbResults = await Place.aggregate([{
+            $sample: {size:1}
+        }])
 
-    // return the placeObject to client
-    res.send(placeObj)
+        res.json({
+            placeId: dbResults[0].placeId,
+            name:dbResults[0].name,
+            lat: Number(dbResults[0].lat),
+            long: Number(dbResults[0].long),
+            photos: dbResults[0].photos
+        })
+    }
 
+    let {latGuess, longGuess} = getRandomCoords()
+    let latLong = `${latGuess}%2C${longGuess}`
+    let placeInfo = await getPlace(latLong)
+    if (placeInfo == null){
+        getRandomPlace()
+        return
+    }
+    let photoRefList = await getPhotoArr(placeInfo.placeID)
+    if (photoRefList == null) {
+        getRandomPlace()
+        return
+    } else {
+        var photoArr = await getPhotoURLArr(photoRefList)
+
+        //let returnedURLs = await getPhotoURLArr(dummyPhotoArr)
+        let returnedURLs = photoArr
+    
+        let placeObj = {
+            placeId: placeInfo.placeID,
+            name:placeInfo.name,
+            lat: placeInfo.locationLat,
+            long: placeInfo.locationLong,
+            photos: returnedURLs
+        }
+
+        // add place to database
+        postPlace(placeObj)
+
+        // return the placeObject to client
+        res.json(placeObj)
+    }
 })
 
 

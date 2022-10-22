@@ -1,4 +1,4 @@
-.body {
+body {
   margin: 0;
   background-color: black;
 }
@@ -126,13 +126,37 @@ input {
 }
 
 .playContainer {
+  color: white;
+  background-color: black;
   display: flex;
   width: 100%;
-  justify-content: space-between;
+  height: 90vh;
+  justify-content: space-around;
 }
 
-.playContainer div {
-  width: 50%;
+.mapContainer {
+  width: 40%;
+  padding: 15px;
 }
 
+
+
+.mapContainer button {
+  margin: 10px 0;
+  
+}
+
+.photoContainer {
+  padding: 15px;
+  width: 60%;
+  height: 90vh;
+}
+
+.carousel-root {
+  max-width: 850px;
+}
+
+.carousel .slide img{
+  border: 3px solid #89A1EF;
+}
 
