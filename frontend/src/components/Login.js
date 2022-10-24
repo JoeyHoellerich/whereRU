@@ -27,7 +27,7 @@ function Login(){
     let handleSubmit = async (e) => {
         e.preventDefault()
         console.log(JSON.stringify(credentials))
-        const response = await fetch(`http://localhost:5000/api/users/authentication`, {
+        const response = await fetch(`/api/users/authentication`, {
             method: 'POST',
             credentials: 'include',
             headers: {

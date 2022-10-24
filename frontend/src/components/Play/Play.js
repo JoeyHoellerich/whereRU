@@ -6,7 +6,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 function Play(){
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch(`http://localhost:5000/api/places`)
+            const response = await fetch(`/api/places`)
             const resData = await response.json()
             setPlaceObj(resData)
         }

@@ -19,7 +19,7 @@ function SignUp(){
     let handleSubmit = async (e) => {
         e.preventDefault()
 
-        let response = await fetch('http://localhost:5000/api/users/', {
+        let response = await fetch('/api/users/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
