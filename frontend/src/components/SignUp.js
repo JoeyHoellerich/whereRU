@@ -1,7 +1,10 @@
 import React, {useState} from "react";
 import logo from "../imgs/whereRU_logo.svg"
+import {useNavigate} from "react-router"
 
 function SignUp(){
+
+    let navigate = useNavigate()
 
     let [currentUser, setCurrentUser] = useState({
         username: "",
@@ -28,6 +31,8 @@ function SignUp(){
         })
         if (response.status === 201 && currentUser.username.length > 0 && currentUser.password.length > 0){
             console.log(currentUser)
+            navigate("/login")
+            window.location.reload(false)
         } else {
             setInvalidName(true)
         }
